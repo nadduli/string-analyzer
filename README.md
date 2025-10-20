@@ -4,14 +4,12 @@ A lightweight RESTful API for analyzing string properties using in-memory storag
 
 ## Features
 
-- 🚀 FastAPI with automatic docs
-- 💾 In-memory array storage 
-- 📊 Complete string analysis
-- 🗣️ Natural language query processing
-- 🐳 Docker support
-- ⚡ Zero dependencies except FastAPI
-
-## Quick Start
+-  FastAPI with automatic docs
+-  In-memory array storage 
+-  Complete string analysis
+-  Natural language query processing
+-  Docker support
+-  Zero dependencies except FastAPI
 
 ### Local Development
 
