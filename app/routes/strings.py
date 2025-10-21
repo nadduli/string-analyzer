@@ -28,23 +28,19 @@ async def create_string(string_data: StringAnalysisCreate):
     """
     Analyze a new string and store its properties
     """
-    # Check if string already exists
     if storage.string_exists(string_data.value):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="String already exists in the system"
         )
     
-    # Analyze string
     properties = StringAnalyzer.analyze_string(string_data.value)
     
-    # Create analysis object
     analysis_data = {
         "value": string_data.value,
         "properties": properties
     }
     
-    # Store in memory
     stored_data = storage.add_string(analysis_data)
     
     return StringAnalysisResponse(**stored_data)
@@ -81,26 +77,21 @@ async def get_all_strings(
     all_strings = storage.get_all_strings()
     filtered_strings = []
     
-    # Apply filters
     for string_data in all_strings:
         properties = string_data["properties"]
         
-        # Check palindrome filter
         if is_palindrome is not None and properties["is_palindrome"] != is_palindrome:
             continue
             
-        # Check length filters
         if min_length is not None and properties["length"] < min_length:
             continue
             
         if max_length is not None and properties["length"] > max_length:
             continue
             
-        # Check word count filter
         if word_count is not None and properties["word_count"] != word_count:
             continue
             
-        # Check character contains filter
         if contains_character is not None:
             char = contains_character.lower()
             if char not in properties["character_frequency_map"]:
@@ -108,7 +99,6 @@ async def get_all_strings(
         
         filtered_strings.append(string_data)
     
-    # Build filters applied
     filters_applied = {}
     if is_palindrome is not None:
         filters_applied["is_palindrome"] = is_palindrome
@@ -142,18 +132,15 @@ async def filter_by_natural_language(
     Filter strings using natural language queries
     """
     try:
-        # Parse natural language
         parsed_filters = NaturalLanguageParser.parse_query(query)
         validated_filters = NaturalLanguageParser.validate_filters(parsed_filters)
         
-        # Convert to regular filter parameters
         is_palindrome = validated_filters.get('is_palindrome')
         min_length = validated_filters.get('min_length')
         max_length = validated_filters.get('max_length')
         word_count = validated_filters.get('word_count')
         contains_character = validated_filters.get('contains_character')
         
-        # Get filtered strings using existing logic
         all_strings = storage.get_all_strings()
         filtered_strings = []
         

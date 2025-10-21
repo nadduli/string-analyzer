@@ -1,10 +1,8 @@
-# app/models.py
 from pydantic import BaseModel, Field
 from typing import Dict, List, Optional, Any
-from datetime import datetime
 
 class StringAnalysisCreate(BaseModel):
-    value: str = Field(..., min_length=0, max_length=10000, description="String to analyze")
+    value: str = Field(..., description="String to analyze")
 
 class StringProperties(BaseModel):
     length: int

@@ -1,4 +1,4 @@
-# app/main.py
+# main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -7,10 +7,9 @@ from app.routes.strings import router as strings_router
 app = FastAPI(
     title="String Analyzer API",
     version="1.0.0",
-    description="HNG13 Backend Stage 1 - Simple In-Memory String Analyzer"
+    description="HNG13 Backend Stage 1 - String Analyzer"
 )
 
-# CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -19,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
+# This is the critical line - make sure the router is included
 app.include_router(strings_router)
 
 @app.get("/")
@@ -35,13 +34,12 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
-# Add some sample data on startup
 @app.on_event("startup")
 async def startup_event():
     from app.storage import storage
     from app.utils.analyzer import StringAnalyzer
     
-    # Add some sample strings for testing
+    # Add sample data
     sample_strings = [
         "hello world",
         "madam",
@@ -62,7 +60,7 @@ async def startup_event():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        "app.main:app",
+        "main:app",
         host="0.0.0.0",
         port=8000,
         reload=True
