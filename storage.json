@@ -1,0 +1,19 @@
+[
+  {
+    "id": "8f9f9ba0c3ab152d095699b66243abaa2dcec79cefd9d0f2b8ec7ea9f4262d31",
+    "value": "me em em me",
+    "properties": {
+      "length": 11,
+      "is_palindrome": false,
+      "unique_characters": 3,
+      "word_count": 4,
+      "sha256_hash": "8f9f9ba0c3ab152d095699b66243abaa2dcec79cefd9d0f2b8ec7ea9f4262d31",
+      "character_frequency_map": {
+        "m": 4,
+        "e": 4,
+        " ": 3
+      }
+    },
+    "created_at": "2025-10-20T21:57:52.277Z"
+  }
+]
