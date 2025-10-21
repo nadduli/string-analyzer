@@ -1,20 +1,21 @@
-# app/utils/analyzer.py
 import hashlib
+import re
 from typing import Dict
 
 class StringAnalyzer:
     @staticmethod
     def analyze_string(value: str) -> Dict:
         """Analyze string and return all properties"""
-        trimmed_value = value.strip()
-        
+        if value is None:
+            raise ValueError("String value cannot be None")
+            
         return {
-            "length": StringAnalyzer.get_string_length(trimmed_value),
-            "is_palindrome": StringAnalyzer.is_palindrome(trimmed_value),
-            "unique_characters": StringAnalyzer.get_unique_characters_count(trimmed_value),
-            "word_count": StringAnalyzer.get_word_count(trimmed_value),
-            "sha256_hash": StringAnalyzer.generate_sha256_hash(trimmed_value),
-            "character_frequency_map": StringAnalyzer.get_character_frequency(trimmed_value)
+            "length": StringAnalyzer.get_string_length(value),
+            "is_palindrome": StringAnalyzer.is_palindrome(value),
+            "unique_characters": StringAnalyzer.get_unique_characters_count(value),
+            "word_count": StringAnalyzer.get_word_count(value),
+            "sha256_hash": StringAnalyzer.generate_sha256_hash(value),
+            "character_frequency_map": StringAnalyzer.get_character_frequency(value)
         }
 
     @staticmethod
@@ -23,10 +24,14 @@ class StringAnalyzer:
 
     @staticmethod
     def is_palindrome(string: str) -> bool:
+        """Case-insensitive palindrome check (only alphanumeric characters)"""
         if not string:
             return True
             
-        clean_string = ''.join(char.lower() for char in string if char.isalnum())
+        clean_string = re.sub(r'[^a-zA-Z0-9]', '', string).lower()
+        if not clean_string:
+            return True
+            
         return clean_string == clean_string[::-1]
 
     @staticmethod
@@ -35,11 +40,13 @@ class StringAnalyzer:
 
     @staticmethod
     def get_word_count(string: str) -> int:
-        words = string.split()
-        return len(words) if string.strip() else 0
+        if not string.strip():
+            return 0
+        return len(string.split())
 
     @staticmethod
     def generate_sha256_hash(string: str) -> str:
+        """Generate SHA256 hash as hex string"""
         return hashlib.sha256(string.encode('utf-8')).hexdigest()
 
     @staticmethod

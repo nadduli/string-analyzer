@@ -1,4 +1,3 @@
-# app/storage.py
 from typing import List, Dict, Optional
 from datetime import datetime
 
@@ -12,12 +11,6 @@ class Storage:
     def get_string_by_value(self, value: str) -> Optional[Dict]:
         for string_data in self.strings:
             if string_data["value"] == value:
-                return string_data
-        return None
-    
-    def get_string_by_id(self, string_id: str) -> Optional[Dict]:
-        for string_data in self.strings:
-            if string_data["id"] == string_id:
                 return string_data
         return None
     

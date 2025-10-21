@@ -1,9 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Dict, List, Optional, Any
 
-class StringAnalysisCreate(BaseModel):
-    value: str = Field(..., description="String to analyze")
-
 class StringProperties(BaseModel):
     length: int
     is_palindrome: bool
@@ -11,6 +8,9 @@ class StringProperties(BaseModel):
     word_count: int
     sha256_hash: str
     character_frequency_map: Dict[str, int]
+
+class StringAnalysisCreate(BaseModel):
+    value: str = Field(..., description="String to analyze")
 
 class StringAnalysisResponse(BaseModel):
     id: str

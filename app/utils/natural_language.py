@@ -1,4 +1,3 @@
-# app/utils/natural_language.py
 import re
 from typing import Dict, Any
 
@@ -9,15 +8,15 @@ class NaturalLanguageParser:
         filters = {}
         lower_query = query.lower().strip()
 
-        # Parse palindrome
         if any(word in lower_query for word in ['palindrome', 'palindromic']):
             filters['is_palindrome'] = True
 
-        # Parse word count
         word_count_patterns = [
             (r'single word|one word', 1),
             (r'two words', 2),
             (r'three words', 3),
+            (r'four words', 4),
+            (r'five words', 5),
             (r'(\d+) words?', None)
         ]
 
@@ -30,14 +29,13 @@ class NaturalLanguageParser:
                     filters['word_count'] = int(match.group(1))
                 break
 
-        # Parse length filters
         longer_match = re.search(r'(longer|greater|more than|over)\s+(\d+)', lower_query)
         if longer_match:
-            filters['min_length'] = int(longer_match.group(2))
+            filters['min_length'] = int(longer_match.group(2)) + 1
 
         shorter_match = re.search(r'(shorter|less than|under)\s+(\d+)', lower_query)
         if shorter_match:
-            filters['max_length'] = int(shorter_match.group(2))
+            filters['max_length'] = int(shorter_match.group(2)) - 1
 
         exact_length_match = re.search(r'exactly\s+(\d+)\s+characters', lower_query)
         if exact_length_match:
@@ -45,12 +43,15 @@ class NaturalLanguageParser:
             filters['min_length'] = length
             filters['max_length'] = length
 
-        # Parse character contains
         char_match = re.search(r'contain(s|ing)?\s+(?:the\s+)?(?:letter\s+)?([a-z])', lower_query)
         if char_match:
             filters['contains_character'] = char_match.group(2)
 
-        # Parse vowel contains
+        for char in 'abcdefghijklmnopqrstuvwxyz':
+            if f'contains {char}' in lower_query or f'has {char}' in lower_query:
+                filters['contains_character'] = char
+                break
+
         if 'vowel' in lower_query:
             filters['contains_character'] = 'a'
 

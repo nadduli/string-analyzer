@@ -1,6 +1,5 @@
-# app/routes/strings.py
 from fastapi import APIRouter, HTTPException, status, Query
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 from app.storage import storage
 from app.utils.analyzer import StringAnalyzer
@@ -20,6 +19,7 @@ router = APIRouter(prefix="/strings", tags=["strings"])
     response_model=StringAnalysisResponse,
     status_code=status.HTTP_201_CREATED,
     responses={
+        400: {"model": ErrorResponse},
         409: {"model": ErrorResponse},
         422: {"model": ErrorResponse}
     }
@@ -28,13 +28,31 @@ async def create_string(string_data: StringAnalysisCreate):
     """
     Analyze a new string and store its properties
     """
+    if not hasattr(string_data, 'value') or string_data.value is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing 'value' field in request body"
+        )
+    
+    if not isinstance(string_data.value, str):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Invalid data type for 'value' (must be string)"
+        )
+    
     if storage.string_exists(string_data.value):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="String already exists in the system"
         )
     
-    properties = StringAnalyzer.analyze_string(string_data.value)
+    try:
+        properties = StringAnalyzer.analyze_string(string_data.value)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error analyzing string: {str(e)}"
+        )
     
     analysis_data = {
         "value": string_data.value,
@@ -204,7 +222,7 @@ async def delete_string(string_value: str):
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="String does not exist in the system"
+            detail="String does not exist"
         )
     
     return None
